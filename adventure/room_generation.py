@@ -243,7 +243,8 @@ class Maze:
 
                 room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
                 next_room = Room( id = roomList[i + 1][0][1] , title = roomList[i + 1][1] , description = roomList[i + 1][0] )
-                prev_room = Room( id = roomList[i - 1][0][1] , title = roomList[i - 1][1] , description = roomList[i - 1][0] )
+                prev_room = Room( id = roomList[i - 1][0][1] , title = roomList[i - 1][1] , description = roomList[i - 1][0][:1] )
+                print( 'xxxxxxxxxxxx' , prev_room.description )
                 bloop.append( [ room , next_room , prev_room , i ] )
 
                 # print( room )
@@ -259,7 +260,7 @@ class Maze:
         # [<Room: Room object (None)>, <Room: Room object (None)>, <Room: Room object (None)>, 8]
 
         for i in bloop:
-            
+
             i[0].save()
 
         count = 0
@@ -270,26 +271,29 @@ class Maze:
 
                 i[0].connectRooms( i[1] , i[0].description )
 
+                count += 1
+
                 players = Player.objects.all()
                 for p in players:
                     p.currentRoom = i[0].id
                     p.save()
 
             else:
+
                 # thank you next
                 i[0].connectRooms( i[1] , i[0].description )
 
                 if i[2].description == 'n':
-                    reverse_direction = 's'
-                elif i[2].description == 's':
-                    reverse_direction = 'n'
-                elif i[2].description == 'e':
-                    reverse_direction = 'w'
-                else:
-                    reverse_direction = 'e'
+                    i[0].connectRooms( i[2] , 's' )
 
-                # previous
-                i[0].connectRooms( i[2] , reverse_direction )
+                if i[2].description == 's':
+                    i[0].connectRooms( i[2] , 'n' )
+
+                if i[2].description == 'e':
+                    i[0].connectRooms( i[2] , 'w' )
+
+                if i[2].description == 'w':
+                    i[0].connectRooms( i[2] , 'e' )
 
 
 
