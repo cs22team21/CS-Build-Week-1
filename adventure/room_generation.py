@@ -11,115 +11,18 @@ class Maze:
     def __init__( self ):
         self.size = None
         self.rooms = []
-
-    def setup( room , next_room , prev_room , var ):
-
-        # start room
-        if prev_room == 'None':
-
-            print( 'START ROOM' )
-            var2 = str(int(var) + 1)
-            var = room
-            var2 = next_room
-            var.save()
-            var2.save()
-            direction = room.description
-            print( direction )
-            # f'{int(var) + 1}' = next_room
-            var.connectRooms( var2 , direction )
-            players = Player.objects.all()
-            for p in players:
-                p.currentRoom = room.id
-                p.save()
-
-        # end room
-        elif next_room == "None":
-
-            print( 'END ROOM' )
-            var2 = str(int(var) - 1)
-            var = room
-            var2 = prev_room
-            var.save()
-            direction = prev_room.description
-            print( direction )
-
-            if direction == 'n':
-                reverse_direction = 's'
-            elif direction == 's':
-                reverse_direction = 'n'
-            elif direction == 'w':
-                reverse_direction = 'e'
-            else:
-                reverse_direction = 'w'
-
-            var.connectRooms( var2 , reverse_direction )
-            print( 'START GAME' )
-
-        else:
-            
-            print( 'MID ROOM' )
-            print( room.description )
-            var2 = str(int(var) - 1)
-            var3 = str(int(var) + 1)
-            var = room
-            var2 = prev_room
-            var3 = next_room
-            var.save()
-            var2.save()
-            var3.save()
-
-            direction = prev_room.description
-            print( direction )
-
-            if direction == 'n':
-                reverse_direction = 's'
-            elif direction == 's':
-                reverse_direction = 'n'
-            elif direction == 'w':
-                reverse_direction = 'e'
-            else:
-                reverse_direction = 'w'
-
-            var.connectRooms( var2 , reverse_direction )
-            var.connectRooms( var3 , room.description )
-
-
-
-            # var = Room( title = room.title, description = room.description )
-
-            # room_one = Room(title="Outside Cave Entrance", description="North of you, the cave mount beckons")
-            # room_two = Room(title="Foyer", description="Dim light filters in from the south. Dusty passages run north and east.")
-            # room_three = Room(title="three", description="North of you, the cave mount beckons")
-            # room_four = Room(title="Four", description="Dim light filters orth and east.")
-
-            # room_connections.append( var )
-            # var.save()
-            # print( 'Connections' , room_connections )
-
-            # room_one.save()
-            # room_two.save()
-            # room_three.save()
-            # room_four.save()
-
-            # room_one.connectRooms(room_two, "n")
-
-            # room_two.connectRooms(room_three, "w")
-            # room_two.connectRooms(room_one, "s")
-
-            # room_three.connectRooms( room_four, 'n' )
-            # room_three.connectRooms( room_two, 'e' )
-
-            # room_four.connectRooms( room_three, 's' )
     
     def generate( size ):
         size = size
-        the_map = ['start']
+        the_map = []
         direction = []
-        room_number = 0
+        room_number = 1
 
         for i in range( size ):
 
             ran_num = random.randint( 4 , 100 ) % 4
+
+
 
             # GO NORTH
             if ran_num == 0:
@@ -300,24 +203,206 @@ class Maze:
 
         Room.objects.all().delete()
 
+        bloop = []
+
+        print( '--------------------' )
+
         for i in range( len( roomList ) - 1 ):
 
             if i == 0:
-                room = Room( title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
-                next_room = Room( title = f'{roomList[i + 1][1]}' , description = f'{roomList[i + 1][2]}' )
-                Maze.setup( room , next_room , "None" , f"{i}" )
+
+                print( 'Current Room:' , roomList[i][1] , roomList[i][0][1] )
+                print( 'Next Room' , roomList[i + 1][1] , roomList[i + 1][0][1:]  )
+                room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
+                next_room = Room( id = roomList[i + 1][0][1] , title = f'{roomList[i + 1][1]}' , description = f'{roomList[i + 1][2]}' )
+                bloop.append( [ room , next_room , "None" , i ] )
             
-            if i == len( roomList ) - 2:
-                room = Room( title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
-                prev_room = Room( title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
-                Maze.setup( room , "None" , prev_room , f"{i}" )
+            if i == len( roomList ):
+
+                print( 'Current Room:' , roomList[i][1] , roomList[i][0][1] )
+                print( 'Prev Room' , roomList[i - 1][1] , roomList[i - 1][0][1:]  )
+                room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
+                prev_room = Room( id = roomList[i - 1][0][1] , title = f'{roomList[i - 1][1]}' , description = f'{roomList[i - 1][2]}' )
+                bloop.append( [ room , "None" , prev_room , i ] )
+
+            if i >= 1:
+
+                # print( roomList )
+                print( '\n\n' )
+
+                print( 'Current Room:' , roomList[i][1] , roomList[i][0][1] )
+                print( 'Next Room' , roomList[i + 1][1] , roomList[i + 1][0][1:]  )
+                print( 'Prev Room' , roomList[i - 1][1] , roomList[i - 1][0][1:] )
+
+                # f'room_{i}' = Room( title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
+
+                #roomid
+                room = roomList[i][0][1]
+                next_room = roomList[i + 1][0][1]
+                prev_room = roomList[i - 1][0][1]
+
+                room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
+                next_room = Room( id = roomList[i + 1][0][1] , title = roomList[i + 1][1] , description = roomList[i + 1][0] )
+                prev_room = Room( id = roomList[i - 1][0][1] , title = roomList[i - 1][1] , description = roomList[i - 1][0] )
+                bloop.append( [ room , next_room , prev_room , i ] )
+
+                # print( room )
+
+        # [<Room: Room object (None)>, <Room: Room object (None)>, 'None', 0]
+        # [<Room: Room object (None)>, <Room: Room object (None)>, <Room: Room object (None)>, 1]
+        # [<Room: Room object (None)>, <Room: Room object (None)>, <Room: Room object (None)>, 2]
+        # [<Room: Room object (None)>, <Room: Room object (None)>, <Room: Room object (None)>, 3]
+        # [<Room: Room object (None)>, <Room: Room object (None)>, <Room: Room object (None)>, 4]
+        # [<Room: Room object (None)>, <Room: Room object (None)>, <Room: Room object (None)>, 5]
+        # [<Room: Room object (None)>, <Room: Room object (None)>, <Room: Room object (None)>, 6]
+        # [<Room: Room object (None)>, <Room: Room object (None)>, <Room: Room object (None)>, 7]
+        # [<Room: Room object (None)>, <Room: Room object (None)>, <Room: Room object (None)>, 8]
+
+        for i in bloop:
+            
+            i[0].save()
+
+        count = 0
+
+        for i in bloop:
+
+            if count == 0:
+
+                i[0].connectRooms( i[1] , i[0].description )
+
+                players = Player.objects.all()
+                for p in players:
+                    p.currentRoom = i[0].id
+                    p.save()
 
             else:
+                # thank you next
+                i[0].connectRooms( i[1] , i[0].description )
 
-                room = Room( title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
-                next_room = Room( title = f'{roomList[i + 1][1]}' , description = f'{roomList[i + 1][2]}' )
-                prev_room = Room( title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
-                Maze.setup( room , next_room , prev_room , f"{i}" )
+                if i[2].description == 'n':
+                    reverse_direction = 's'
+                elif i[2].description == 's':
+                    reverse_direction = 'n'
+                elif i[2].description == 'e':
+                    reverse_direction = 'w'
+                else:
+                    reverse_direction = 'e'
+
+                # previous
+                i[0].connectRooms( i[2] , reverse_direction )
+
+
+
+    # def setup( room , next_room , prev_room , var ):
+
+    #     # start room
+    #     if prev_room == 'None':
+
+    #         print('\n-----------------\n' )
+
+    #         print( 'START ROOM' )
+    #         var2 = str(int(var) + 1)
+    #         print( 'Room:' , var , 'Next Room:' , var2 )
+    #         var = room
+    #         var2 = next_room
+    #         print( 'Room:' , var ,'Next Room:' , var2 )
+    #         var.save()
+    #         var2.save()
+    #         direction = room.description
+    #         print( direction )
+    #         var.connectRooms( var2 , direction )
+
+    #         players = Player.objects.all()
+    #         for p in players:
+    #             p.currentRoom = room.id
+    #             p.save()
+
+    #     # end room
+    #     elif next_room == "None":
+
+    #         print('\n-----------------\n' )
+
+    #         print( 'END ROOM' )
+    #         var2 = str(int(var) - 1)
+    #         print( 'Room:' , var , 'Next Room:' , var2 )
+    #         var = room
+    #         var2 = prev_room
+    #         print( 'Room:' , var , 'Next Room:' , var2 )
+    #         var.save()
+    #         var2.save()
+    #         direction = prev_room.description
+    #         print( direction )
+
+    #         if direction == 'n':
+    #             reverse_direction = 's'
+    #         elif direction == 's':
+    #             reverse_direction = 'n'
+    #         elif direction == 'w':
+    #             reverse_direction = 'e'
+    #         else:
+    #             reverse_direction = 'w'
+
+    #         var.connectRooms( var2 , reverse_direction )
+    #         print( 'START GAME' )
+
+    #     else:
+
+    #         print('\n-----------------\n' )
+            
+    #         print( 'MID ROOM' )
+    #         var2 = str(int(var) + 1)
+    #         var3 = str(int(var) - 1)
+    #         print( 'Room:' , var , 'Next Room:' , var2 , 'Prev Room:' , var3 )
+    #         var = room
+    #         var2 = next_room
+    #         var3 = prev_room
+    #         print( 'Room:' , var , 'Next Room:' , var2 , 'Prev Room:' , var3 )
+    #         var.save()
+    #         var2.save()
+    #         var3.save()
+
+    #         direction = prev_room.description
+    #         print( direction )
+
+    #         if direction == 'n':
+    #             reverse_direction = 's'
+    #         elif direction == 's':
+    #             reverse_direction = 'n'
+    #         elif direction == 'w':
+    #             reverse_direction = 'e'
+    #         else:
+    #             reverse_direction = 'w'
+
+    #         var.connectRooms( var2 , reverse_direction )
+    #         var.connectRooms( var3 , room.description )
+
+
+
+            # var = Room( title = room.title, description = room.description )
+
+            # room_one = Room(title="Outside Cave Entrance", description="North of you, the cave mount beckons")
+            # room_two = Room(title="Foyer", description="Dim light filters in from the south. Dusty passages run north and east.")
+            # room_three = Room(title="three", description="North of you, the cave mount beckons")
+            # room_four = Room(title="Four", description="Dim light filters orth and east.")
+
+            # room_connections.append( var )
+            # var.save()
+            # print( 'Connections' , room_connections )
+
+            # room_one.save()
+            # room_two.save()
+            # room_three.save()
+            # room_four.save()
+
+            # room_one.connectRooms(room_two, "n")
+
+            # room_two.connectRooms(room_three, "w")
+            # room_two.connectRooms(room_one, "s")
+
+            # room_three.connectRooms( room_four, 'n' )
+            # room_three.connectRooms( room_two, 'e' )
+
+            # room_four.connectRooms( room_three, 's' )
 
 
 
@@ -325,6 +410,7 @@ class Maze:
         # ok = []
 
 
+        # count = 0
 
         # for i in range( len( roomList ) - 1 ):
 
@@ -372,6 +458,11 @@ class Maze:
         #             ok[i].connectRooms( prev_room , "e")
 
         # start_room = Room( id = 0 , title = f'{roomList[0][1]}' , description = f'{roomList[i][2]}'  )
+
+        # players = Player.objects.all()
+        # for p in players:
+        #     p.currentRoom = start_room.id
+        #     p.save()
 
                 
 
