@@ -62,6 +62,34 @@ def create_user_player(sender, instance, created, **kwargs):
 def save_user_player(sender, instance, **kwargs):
     instance.player.save()
 
+class Character(Player):
+    def __init__(self, level, HP, strength, stamina):
+        self.level = 1
+        self.HP = HP
+        self.strength = strength
+        self.stamina = stamina
+        self.inventory = []
+
+
+class Cyborg_Warrior(Character):
+    def __init__(self, level, rage, strength, stamina):
+        self.level = 1
+        self.HP = 50
+        self.strength = strength
+        self.stamina = stamina
+        self.rage = 0
+    
+    def basic_attack(self, strength, target):
+        self.rage += strength*2
+        print(f"Cyborg Warrior swings at {target} and does {strength + 2} damage.")
+    
+    def slam(self, strength, rage, target):
+        if self.rage >= 10:
+            self.rage -= 10
+            print(f"Cyborg Warrior winds up and performs an overhead slam on {target} dealing {strength * 4 + 1} damage")
+
+class Tech_Mage(Character):
+    pass
 
 
 
