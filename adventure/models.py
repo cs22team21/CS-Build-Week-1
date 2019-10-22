@@ -18,6 +18,7 @@ class Room(models.Model):
             destinationRoom = Room.objects.get(id=destinationRoomID)
         except Room.DoesNotExist:
             print("That room does not exist")
+        
         else:
             if direction == "n":
                 self.n_to = destinationRoomID
