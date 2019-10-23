@@ -8,15 +8,17 @@ os.system( 'clear' )
 
 class Maze:
     
-    def __init__( self ):
-        self.size = None
-        self.rooms = []
+    # def __init__( self ):
+    #     self.size = None
+    #     self.rooms = []
     
     def generate( size ):
-        size += 1
+        # size += 1
         the_map = []
         direction = []
         room_number = 1
+
+        Room.objects.all().delete()
 
         for i in range( size ):
 
@@ -192,12 +194,13 @@ class Maze:
         roomList = []
 
         # add room names to the list
-        for i in range( len( the_map ) - 1 ):
+        end = 0
+        for i in the_map:
 
-            end = size - 2
-            if i == end:
-                roomList.append( [ the_map[i] , 'The End' ] )
+            if end == size:
+                roomList.append( [ i , 'The End' ] )
                 # roomList.pop(len( roomList ) - 1)
+                end += 1
 
             else:
 
@@ -205,7 +208,8 @@ class Maze:
                 num2 = random.randint( 0 , len( noun ) - 1 )
                 random_name1 = f'{adj[num1]} {noun[num2]}'
 
-                roomList.append( [ the_map[i] , random_name1 ] )
+                roomList.append( [ i , random_name1 ] )
+                end += 1
 
         os.system( 'clear' )
 
@@ -218,9 +222,6 @@ class Maze:
 
             roomList[i].append( roomList[i + 1][0][:1] )
 
-
-        Room.objects.all().delete()
-
         bloop = []
 
         print( '\n--------------------' )
@@ -228,6 +229,8 @@ class Maze:
         for i in range( len( roomList ) - 1 ):
 
             print( '\n\n' )
+
+            print( 'THE END???' , roomList[i][1]  )
 
             if i == 0:
 
@@ -237,25 +240,16 @@ class Maze:
                 next_room = Room( id = roomList[i + 1][0][1] , title = f'{roomList[i + 1][1]}' , description = f'{roomList[i + 1][2]}' )
                 bloop.append( [ room , next_room , "None" , i ] )
             
-            if i == len( roomList ) - 1:
+            # if i == len( roomList ) - 1:
 
-                print( 'Current Room:' , roomList[i][1] , roomList[i][0][1:] )
-                print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:]  )
+            #     print( 'Current Room:' , roomList[i][1] , roomList[i][0][1:] )
+            #     print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:]  )
 
-                room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
-                prev_room = Room( id = roomList[i - 1][0][1] , title = f'{roomList[i - 1][1]}' , description = f'{roomList[i - 1][2]}' )
-                bloop.append( [ room , "None" , prev_room , i ] )
+            #     room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
+            #     prev_room = Room( id = roomList[i - 1][0][1] , title = f'{roomList[i - 1][1]}' , description = f'{roomList[i - 1][2]}' )
+            #     bloop.append( [ room , "None" , prev_room , i ] )
 
-            if roomList[i][1] == 'The End':
-
-                print( 'Current Room:' , roomList[i][1:] , roomList[i][0][1:] )
-                print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:] )
-
-                room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
-                prev_room = Room( id = roomList[i - 1][0][1] , title = roomList[i - 1][1] , description = roomList[i - 1][0][:1] )
-                bloop.append( [ room , 'None' , prev_room , i ] )
-
-            elif i >= 1:
+            if i >= 1:
 
                 print( 'Current Room:' , roomList[i][1:] , roomList[i][0][1:] )
                 print( 'Next Room' , roomList[i + 1][1:] , roomList[i + 1][0][1:]  )
@@ -272,15 +266,30 @@ class Maze:
                 print( 'xxxxxxxxxxxx' , prev_room.description )
                 bloop.append( [ room , next_room , prev_room , i ] )
 
+                if roomList[i + 1][1] == 'The End':
+                    print( 'THIS IS THE END BITCH' )
+
+                    print( 'THIS IS THE END' )
+
+                    print( 'Current Room:' , roomList[i][1:] , roomList[i][0][1:] )
+                    print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:] )
+
+                    i += 1
+
+                    room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'THIS IS THE END' )
+                    prev_room = Room( id = roomList[i - 1][0][1] , title = roomList[i - 1][1] , description = roomList[i - 1][0][:1] )
+                    bloop.append( [ room , 'None' , prev_room , i ] )
+
         for i in bloop:
 
             i[0].save()
 
+
         count = 0
 
-        print( '=======BLOOP=======\n' , bloop )
-
         for i in bloop:
+
+            print( 'i[1]' , i[0].description , i[0].title )
 
             if count == 0:
 
@@ -288,24 +297,40 @@ class Maze:
 
                 count += 1
 
-                players = Player.objects.all()
-                for p in players:
-                    p.currentRoom = i[0].id
-                    p.save()
-
             else:
+
+                if count == 2:
+                
+                    players = Player.objects.all()
+                    for p in players:
+                        p.currentRoom = i[0].id
+                        p.save()
+
+                count += 1
 
                 # thank you next
 
                 if i[1] == 'None':
 
+                    print( 'THIS IS THE END' )
                     os.system( 'clear' )
 
                     print( i )
 
-                    i[0].connectRooms( i[2] , None )
+                    i[0].connectRooms( i[2] , i[2].description )
 
-                    count += 1
+                    
+                    if i[0].description == 'n':
+                        i[0].connectRooms( i[2] , 's' )
+
+                    if i[0].description == 's':
+                        i[0].connectRooms( i[2] , 'n' )
+
+                    if i[0].description == 'e':
+                        i[0].connectRooms( i[2] , 'w' )
+
+                    if i[0].description == 'w':
+                        i[0].connectRooms( i[2] , 'e' )
 
                 else:
 
@@ -322,5 +347,3 @@ class Maze:
 
                     if i[2].description == 'w':
                         i[0].connectRooms( i[2] , 'e' )
-
-                    count += 1
