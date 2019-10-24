@@ -12,15 +12,8 @@ from .room_generation import Maze
 # instantiate pusher
 pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
 
-channels_client = pusher.Pusher(
-  app_id='886438',
-  key='e9dbeefcee6cc73d52f2',
-  secret='70f00db46890deebbc4b',
-  cluster='mt1',
-  ssl=True
-)
 
-channels_client.trigger('my-channel', 'my-event', {'message': 'hello world'})
+pusher.trigger('my-channel', 'my-event', {'message': 'hello world'})
 
 
 @csrf_exempt
