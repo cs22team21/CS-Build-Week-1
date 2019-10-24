@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-# from pusher import Pusher
+from pusher import Pusher
 from django.http import JsonResponse
 from decouple import config
 from django.contrib.auth.models import User
@@ -11,6 +11,16 @@ from .room_generation import Maze
 
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
+
+channels_client = Pusher(
+  app_id='886417',
+  key='675f103167f54a30226a',
+  secret='eab55f2c02ca3704da9e',
+  cluster='us3',
+  ssl=True
+)
+
+channels_client.trigger('my-channel', 'my-event', {'message': 'hello world'})
 
 @csrf_exempt
 @api_view(["GET"])
