@@ -16,7 +16,7 @@ from .room_generation import Maze
 @api_view(["GET"])
 def initialize(request):
     user = request.user
-    Maze.generate(20)
+    Maze.generate(500)
     player = user.player
     player_id = player.id
     uuid = player.uuid
