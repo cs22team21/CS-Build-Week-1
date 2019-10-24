@@ -26,7 +26,7 @@ def position(request):
 @api_view(["GET"])
 def initialize(request):
     user = request.user
-    Maze.generate(20)
+    Maze.generate(100)
     player = user.player
     player_id = player.id
     uuid = player.uuid
