@@ -8,6 +8,7 @@ from .models import *
 from rest_framework.decorators import api_view
 import json
 from .room_generation import Maze
+from .dungeon import makeRoom
 
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
@@ -94,3 +95,8 @@ def get_rooms(request):
         }
         rooms.append(data)
     return JsonResponse({"rooms": rooms})
+
+@csrf_exempt
+@api_view(["GET"])
+def grid(request):
+    return JsonResponse({"grid": makeRoom(400, 400, Room.objects.first())})
