@@ -19,7 +19,6 @@ class Maze:
         room_number = 1
 
         Room.objects.all().delete()
-
         for i in range( size ):
 
             ran_num = random.randint( 4 , 100 ) % 4
@@ -224,36 +223,26 @@ class Maze:
 
         bloop = []
 
-        print( '\n--------------------' )
+        print( '\n--------------------\n' )
 
         for i in range( len( roomList ) - 1 ):
 
-            print( '\n\n' )
-
-            print( 'THE END???' , roomList[i][1]  )
+            # print( '\n' )
 
             if i == 0:
 
-                print( 'Current Room:' , roomList[i][1] , roomList[i][0][1:] )
-                print( 'Next Room' , roomList[i + 1][1:] , roomList[i + 1][0][1:]  )
+                # print( 'Current Room:' , roomList[i][1] , roomList[i][0][1:] )
+                # print( 'Next Room' , roomList[i + 1][1:] , roomList[i + 1][0][1:]  )
+
                 room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
                 next_room = Room( id = roomList[i + 1][0][1] , title = f'{roomList[i + 1][1]}' , description = f'{roomList[i + 1][2]}' )
                 bloop.append( [ room , next_room , "None" , i ] )
-            
-            # if i == len( roomList ) - 1:
-
-            #     print( 'Current Room:' , roomList[i][1] , roomList[i][0][1:] )
-            #     print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:]  )
-
-            #     room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
-            #     prev_room = Room( id = roomList[i - 1][0][1] , title = f'{roomList[i - 1][1]}' , description = f'{roomList[i - 1][2]}' )
-            #     bloop.append( [ room , "None" , prev_room , i ] )
 
             if i >= 1:
 
-                print( 'Current Room:' , roomList[i][1:] , roomList[i][0][1:] )
-                print( 'Next Room' , roomList[i + 1][1:] , roomList[i + 1][0][1:]  )
-                print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:] )
+                # print( 'Current Room:' , roomList[i][1:] , roomList[i][0][1:] )
+                # print( 'Next Room' , roomList[i + 1][1:] , roomList[i + 1][0][1:]  )
+                # print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:] )
 
                 #roomid
                 room = roomList[i][0][1]
@@ -263,16 +252,12 @@ class Maze:
                 room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
                 next_room = Room( id = roomList[i + 1][0][1] , title = roomList[i + 1][1] , description = roomList[i + 1][0] )
                 prev_room = Room( id = roomList[i - 1][0][1] , title = roomList[i - 1][1] , description = roomList[i - 1][0][:1] )
-                print( 'xxxxxxxxxxxx' , prev_room.description )
                 bloop.append( [ room , next_room , prev_room , i ] )
 
                 if roomList[i + 1][1] == 'The End':
-                    print( 'THIS IS THE END BITCH' )
 
-                    print( 'THIS IS THE END' )
-
-                    print( 'Current Room:' , roomList[i][1:] , roomList[i][0][1:] )
-                    print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:] )
+                    # print( 'Current Room:' , roomList[i][1:] , roomList[i][0][1:] )
+                    # print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:] )
 
                     i += 1
 
@@ -284,38 +269,29 @@ class Maze:
 
             i[0].save()
 
-
         count = 0
 
-        for i in bloop:
 
-            print( 'i[1]' , i[0].description , i[0].title )
+        for i in bloop:
 
             if count == 0:
 
                 i[0].connectRooms( i[1] , i[0].description )
 
+                players = Player.objects.all()
+                for p in players:
+                    p.currentRoom = i[1].id
+                    p.save()
+
                 count += 1
 
             else:
-
-                if count == 2:
-                
-                    players = Player.objects.all()
-                    for p in players:
-                        p.currentRoom = i[0].id
-                        p.save()
 
                 count += 1
 
                 # thank you next
 
                 if i[1] == 'None':
-
-                    print( 'THIS IS THE END' )
-                    os.system( 'clear' )
-
-                    print( i )
 
                     i[0].connectRooms( i[2] , i[2].description )
 
@@ -334,16 +310,93 @@ class Maze:
 
                 else:
 
-                    i[0].connectRooms( i[1] , i[0].description )
+                    number = random.randint( 0 , 10 ) % 3
 
-                    if i[2].description == 'n':
+                    if number == 0:
+
+                        num1 = random.randint( 0 , len( adj ) - 1 )
+                        num2 = random.randint( 0 , len( noun ) - 1 )
+                        random_name = f'{adj[num1]} {noun[num2]}'
+
+                        branch = Room( id = i[0].id * 12 , title = random_name , description = 'Just a branch' )
+                        branch.save()
+
+                        if i[0].description == 'n':
+                            i[0].connectRooms( branch , 's' )
+                            branch.connectRooms( i[0] , 'n' )
+                            i[0].description = i[0].description + ' & s'
+                            print( 'Branch S of Room:' , i[0].id , i[0].description )
+                            # branch = Room( id = i[0].id * 12 , title = random_name , description = 's' )
+
+                        elif i[0].description == 's':
+                            i[0].connectRooms( branch , 'n' )
+                            branch.connectRooms( i[0] , 's' )
+                            i[0].description = i[0].description + ' & n'
+                            print( 'Branch North of Room:' , i[0].id , i[0].description )
+                            # branch = Room( id = i[0].id * 12 , title = random_name , description = 'n' )
+
+                        elif i[0].description == 'e':
+                            i[0].connectRooms( branch , 'w' )
+                            branch.connectRooms( i[0] , 'e' )
+                            i[0].description = i[0].description + ' & w'
+                            print( 'Branch West of Room:' , i[0].id , i[0].description)
+                            # branch = Room( id = i[0].id * 12 , title = random_name , description = 'w' )
+
+                        elif i[0].description == 'w':
+                            i[0].connectRooms( branch , 'e' )
+                            branch.connectRooms( i[0] , 'w' )
+                            i[0].description = i[0].description + ' & e'
+                            print( 'Branch East of Room:' , i[0].id , i[0].description )
+                            # branch = Room( id = i[0].id * 12 , title = random_name , description = 'e' )
+
+                        # branch.connectRooms( i[1] , i[1].description[:1] )
+                        # branch.connectRooms( i[0] , i[1].description[:1] )
+
+                        if branch.description == 'n':
+                            branch.connectRooms( i[0] , 's' )
+
+                        elif branch.description == 's':
+                            branch.connectRooms( i[0] , 'n' )
+
+                        elif branch.description == 'e':
+                            branch.connectRooms( i[0] , 'w' )
+
+                        elif branch.description == 'w':
+                            branch.connectRooms( i[0] , 'e' )
+                            
+
+                    # # next_room
+                    i[0].connectRooms( i[1] , i[0].description[:1] )
+
+                    # r_foyer.connectRooms(r_overlook, "n")
+                    # r_overlook.connectRooms(r_foyer, "s")
+                    # r_foyer.connectRooms(r_narrow, "e")
+                    # r_narrow.connectRooms(r_foyer, "w")
+
+                    # current to previous
+                    if i[0].description[:1] == 'n':
+                        i[1].connectRooms( i[0] , 's' )
+
+                    elif i[0].description[:1] == 's':
+                        i[1].connectRooms( i[0] , 'n' )
+
+                    elif i[0].description[:1] == 'e':
+                        i[1].connectRooms( i[0] , 'w' )
+
+                    elif i[0].description[:1] == 'w':
+                        i[1].connectRooms( i[0] , 'e' )
+
+                    # prev
+                    if i[2].description[:1] == 'n':
                         i[0].connectRooms( i[2] , 's' )
 
-                    if i[2].description == 's':
+                    elif i[2].description[:1] == 's':
                         i[0].connectRooms( i[2] , 'n' )
 
-                    if i[2].description == 'e':
+                    elif i[2].description[:1] == 'e':
                         i[0].connectRooms( i[2] , 'w' )
 
-                    if i[2].description == 'w':
+                    elif i[2].description[:1] == 'w':
                         i[0].connectRooms( i[2] , 'e' )
+
+                    count += 1
