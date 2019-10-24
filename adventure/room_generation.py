@@ -316,11 +316,11 @@ class Maze:
 
         for i in bloop:
 
-            print( 'i[0]' , i[0].id , i[0].description , i[0].title )
+            print( '\ni[0]' , i[0].id , i[0].description , i[0].title )
 
             if count == 0:
 
-                print( 'NEXT ONES DESCRIPTION' , i[0].description )
+                print( 'NEXT ONES DESCRIPTION' , i[0].description , i[1].title )
 
                 i[0].connectRooms( i[1] , i[0].description )
 
@@ -341,8 +341,6 @@ class Maze:
                 count += 1
 
             else:
-
-                prev.append( i[0] )
 
                 # thank you next
 
@@ -368,9 +366,9 @@ class Maze:
                 else:
 
                     i[0].connectRooms( i[1] , i[0].description )
-                    # prev[ len( prev ) - 1 ].connectRooms( i[0] , prev[ len( prev ) - 1 ].description)
+                    prev[ len( prev ) - 1 ].connectRooms( i[0] , prev[ len( prev ) - 1 ].description)
 
-                    # print( 'CURRENT ONE' , i[0].description , i[0].title , 'PREVIOUS ONES DESCRIPTION' , i[2].description , 'Right one?' , prev[ len( prev ) - 1 ].description )
+                    print( 'CURRENT ONE' , i[0].description , i[0].title , 'PREVIOUS ONES DESCRIPTION' , i[2].description , 'Right one?' , prev[ len( prev ) - 1 ].description )
 
                     if prev[ len( prev ) - 1 ].description == 'n':
                         i[0].connectRooms( i[2] , 's' )
@@ -383,6 +381,8 @@ class Maze:
 
                     elif prev[ len( prev ) - 1 ].description == 'w':
                         i[0].connectRooms( i[2] , 'e' )
+
+                prev.append( i[0] )
 
 
 # r_outside.connectRooms(r_foyer, "n")
