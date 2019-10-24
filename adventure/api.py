@@ -11,7 +11,16 @@ from .room_generation import Maze
 
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
-
+@csrf_exempt
+@api_view(["GET"])
+def position(request):
+    user = request.user
+    player = user.player
+    player_id = player.id
+    uuid = player.uuid
+    room = player.room()
+    players = room.playerNames(player_id)
+    return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'n_to': room.n_to, 'w_to': room.w_to, 's_to': room.s_to, 'e_to': room.e_to, 'id': room.id}, safe=True)
 @csrf_exempt
 @api_view(["GET"])
 def initialize(request):
@@ -22,7 +31,7 @@ def initialize(request):
     uuid = player.uuid
     room = player.room()
     players = room.playerNames(player_id)
-    return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players}, safe=True)
+    return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'n_to': room.n_to, 'w_to': room.w_to, 's_to': room.s_to, 'e_to': room.e_to, 'id': room.id}, safe=True)
 
 
 # @csrf_exempt
@@ -56,7 +65,7 @@ def move(request):
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has walked {dirs[direction]}.'})
         # for p_uuid in nextPlayerUUIDs:
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
-        return JsonResponse({'name':player.user.username, 'title':nextRoom.title, 'description':nextRoom.description, 'players':players, 'error_msg':""}, safe=True)
+        return JsonResponse({'name':player.user.username, 'title':nextRoom.title, 'description':nextRoom.description, 'n_to': nextRoom.n_to, 's_to': nextRoom.s_to, 'e_to': nextRoom.e_to, 'w_to': nextRoom.w_to, 'players':players, 'error_msg':""}, safe=True)
     else:
         players = room.playerNames(player_id)
         return JsonResponse({'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
@@ -65,5 +74,23 @@ def move(request):
 @csrf_exempt
 @api_view(["POST"])
 def say(request):
-    # IMPLEMENT
-    return JsonResponse({'error':"Not yet implemented"}, safe=True, status=500)
+    pass
+
+@csrf_exempt
+@api_view(["GET"])
+def get_rooms(request):
+    rooms = []
+    for room in Room.objects.all():
+        players = room.playerNames(request.user.player.id)
+        data = {
+            'title': room.title,
+            'description': room.description,
+            'id': room.id,
+            'n_to': room.n_to,
+            's_to': room.s_to,
+            'e_to': room.e_to,
+            'w_to': room.w_to,
+            'players': players
+        }
+        rooms.append(data)
+    return JsonResponse({"rooms": rooms})
