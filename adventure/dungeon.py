@@ -12,7 +12,7 @@ def makeRoom(x, y, room):
             if room.n_to != 0:
                 north = {}
                 north['x'] = x
-                north['y'] = y - 2 * h
+                north['y'] = y - 40
                 north['room'] = room.n_to
                 line1 = x + 10
                 line2 = y
@@ -24,7 +24,7 @@ def makeRoom(x, y, room):
             if room.s_to != 0:
                 south = {}
                 south['x'] = x
-                south['y'] = y + 2 * h
+                south['y'] = y + 40
                 south['room'] = room.s_to
                 line1 = x + 10
                 line2 = y + 20
