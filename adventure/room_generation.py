@@ -8,14 +8,10 @@ os.system( 'clear' )
 
 class Maze:
     
-    # def __init__( self ):
-    #     self.size = None
-    #     self.rooms = []
-    
     def generate( size ):
         origional_size = size
         decreased = math.floor( size / 4 )
-        size -= decreased - 1
+        size -= decreased
         the_map = []
         direction = []
         room_number = 1
@@ -253,8 +249,6 @@ class Maze:
 
         for i in range( len( roomList ) - 1 ):
 
-            # print( '\n' )
-
             if i <= 0:
 
                 print( 'Current Room:' , roomList[i][1] , roomList[i][0][1:] )
@@ -266,17 +260,9 @@ class Maze:
 
             if roomList[i + 1][1] == 'The End':
 
-                print( 'KJAHSDKJHASKDJHAKS' )
-
                 print( 'Current Room:' , roomList[i][1:] , roomList[i][0][1:] )
                 print( 'Next Room' , roomList[i + 1][1:] , roomList[i + 1][0][1:]  )
                 print( 'Prev Room' , roomList[i - 1][1:] , roomList[i - 1][0][1:] )
-                # room = Room( id = roomList[i][0][1] , title = f'{roomList[i][1]}' , description = f'{roomList[i][2]}' )
-                # next_room = Room( id = roomList[i][0][1:] , title = f'{roomList[i][1]}' , description = f'THIS IS THE END' )
-                # prev_room = Room( id = roomList[i - 1][0][1:] , title = roomList[i - 1][1:] , description = roomList[i - 1][0][0] )
-                # bloop.append( [ room , next_room , prev_room , i ] )
-
-                # i += 1
 
                 room = Room( id = roomList[i][0][1:] , title = f'{roomList[i][1]}' , description = f'THIS IS THE END' )
                 prev_room = Room( id = roomList[i][0][1:] , title = roomList[i - 1][1:] , description = roomList[i - 1][0][0] )
@@ -382,50 +368,50 @@ class Maze:
                             if i[0].description[:1] == 'n':
 
                                 
-                                branch = Room( id = branch_id * 12 , title = random_name , description = 'e' )
-                                branch.save()
-                                i[0].connectRooms( branch , 'w' )
-                                branch.connectRooms( i[0] , 'e' )
+                                    branch = Room( id = branch_id * 12 , title = random_name , description = 'e' )
+                                    branch.save()
+                                    i[0].connectRooms( branch , 'w' )
+                                    branch.connectRooms( i[0] , 'e' )
 
-                                i[0].description = i[0].description[:1] + f' or w or {opposite}'
-                                i[0].description = i[0].description[:1] + f' or w'
-                                print( 'Branch West of Room:' , i[0].id , i[0].description , branch.id )
+                                    i[0].description = i[0].description[:1] + f' or w or {opposite}'
+                                    i[0].description = i[0].description[:1] + f' or w'
+                                    print( 'Branch West of Room:' , i[0].id , i[0].description , branch.id )
 
                             elif i[0].description[:1] == 's':
 
-                                # connect branch to opposite direction
-                                branch = Room( id = branch_id * 12 , title = random_name , description = 'w' )
-                                branch.save()
-                                i[0].connectRooms( branch , 'e' )
-                                branch.connectRooms( i[0] , 'w' )
+                                    # connect branch to opposite direction
+                                    branch = Room( id = branch_id * 12 , title = random_name , description = 'w' )
+                                    branch.save()
+                                    i[0].connectRooms( branch , 'e' )
+                                    branch.connectRooms( i[0] , 'w' )
 
-                                # i[0].description = i[0].description[:1] + f' or e or {opposite}'
-                                i[0].description = i[0].description[:1] + f' or e'
-                                print( 'Branch West of Room:' , i[0].id , i[0].description , branch.id )
+                                    # i[0].description = i[0].description[:1] + f' or e or {opposite}'
+                                    i[0].description = i[0].description[:1] + f' or e'
+                                    print( 'Branch West of Room:' , i[0].id , i[0].description , branch.id )
 
                             elif i[0].description[:1] == 'e':
 
-                                # connect branch to opposite direction
-                                branch = Room( id = branch_id * 12 , title = random_name , description = 's' )
-                                branch.save()
-                                i[0].connectRooms( branch , 'n' )
-                                branch.connectRooms( i[0] , 's' )
+                                    # connect branch to opposite direction
+                                    branch = Room( id = branch_id * 12 , title = random_name , description = 's' )
+                                    branch.save()
+                                    i[0].connectRooms( branch , 'n' )
+                                    branch.connectRooms( i[0] , 's' )
 
-                                # i[0].description = i[0].description[:1] + f' or n or {opposite}'
-                                i[0].description = i[0].description[:1] + f' or n'
-                                print( 'Branch West of Room:' , i[0].id , i[0].description , branch.id )
+                                    # i[0].description = i[0].description[:1] + f' or n or {opposite}'
+                                    i[0].description = i[0].description[:1] + f' or n'
+                                    print( 'Branch West of Room:' , i[0].id , i[0].description , branch.id )
 
                             elif i[0].description[:1] == 'w':
 
-                                # connect branch to opposite direction
-                                branch = Room( id = branch_id * 12 , title = random_name , description = 'n' )
-                                branch.save()
-                                i[0].connectRooms( branch , 's' )
-                                branch.connectRooms( i[0] , 'n' )
+                                    # connect branch to opposite direction
+                                    branch = Room( id = branch_id * 12 , title = random_name , description = 'n' )
+                                    branch.save()
+                                    i[0].connectRooms( branch , 's' )
+                                    branch.connectRooms( i[0] , 'n' )
 
-                                # i[0].description = i[0].description[:1] + f' or s or {opposite}'
-                                i[0].description = i[0].description[:1] + f' or s'
-                                print( 'Branch West of Room:' , i[0].id , i[0].description , branch.id )
+                                    # i[0].description = i[0].description[:1] + f' or s or {opposite}'
+                                    i[0].description = i[0].description[:1] + f' or s'
+                                    print( 'Branch West of Room:' , i[0].id , i[0].description , branch.id )
 
 
 
@@ -455,11 +441,7 @@ class Maze:
 
         print( 'BRANCHES:' , number_of_branches )
         print( 'ROOMS:' , len( bloop ) )
-        print( 'Branch Rooms:' , branch_rooms )
-
-        # count == 0:
-
-        # for i in 
+        # print( 'Branch Rooms:' , branch_rooms )
 
         players = Player.objects.all()
         for p in players:
