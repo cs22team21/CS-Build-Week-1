@@ -69,7 +69,7 @@ def move(request):
         return JsonResponse({'name':player.user.username, 'title':nextRoom.title, 'description':nextRoom.description, 'n_to': nextRoom.n_to, 's_to': nextRoom.s_to, 'e_to': nextRoom.e_to, 'w_to': nextRoom.w_to, 'players':players, 'error_msg':"",'id': nextRoomID}, safe=True)
     else:
         players = room.playerNames(player_id)
-        return JsonResponse({'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
+        return JsonResponse({'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'error_msg':"You cannot move that way.", "id": room.id}, safe=True)
 
 
 @csrf_exempt
