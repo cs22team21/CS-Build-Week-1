@@ -11,7 +11,7 @@ from .room_generation import Maze
 from .dungeon import makeRoom
 
 # instantiate pusher
-pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
+# pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
 @csrf_exempt
 @api_view(["GET"])
 def position(request):
@@ -62,10 +62,10 @@ def move(request):
         players = nextRoom.playerNames(player_id)
         currentPlayerUUIDs = room.playerUUIDs(player_id)
         nextPlayerUUIDs = nextRoom.playerUUIDs(player_id)
-        for p_uuid in currentPlayerUUIDs:
-            pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has walked {dirs[direction]}.'})
-        for p_uuid in nextPlayerUUIDs:
-            pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
+        # for p_uuid in currentPlayerUUIDs:
+        #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has walked {dirs[direction]}.'})
+        # for p_uuid in nextPlayerUUIDs:
+        #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
         return JsonResponse({'name':player.user.username, 'title':nextRoom.title, 'description':nextRoom.description, 'n_to': nextRoom.n_to, 's_to': nextRoom.s_to, 'e_to': nextRoom.e_to, 'w_to': nextRoom.w_to, 'players':players, 'error_msg':"",'id': nextRoomID}, safe=True)
     else:
         players = room.playerNames(player_id)
