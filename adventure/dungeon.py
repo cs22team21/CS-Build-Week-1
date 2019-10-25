@@ -29,7 +29,7 @@ def makeRoom(x, y, room):
                 line1 = x + 5
                 line2 = y + 10
                 line3 = x + 5
-                line4 = y + 20
+                line4 = y + 10
                 roomList.append([south['room'], south['x'], south['y'], line1, line2, line3, line4])
                 makeRoom(south['x'], south['y'], Room.objects.get(id = south['room']))
             
